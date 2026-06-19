@@ -4,59 +4,30 @@ import { Download } from '@playwright/test';
 
 export class DownloadUtil {
 
-    static async saveDownload(
-        download: Download,
-        folder: string = 'downloads'
-    ) {
+    static async saveDownload(download: Download,folder: string = 'downloads') {
 
-        if (
-            !fs.existsSync(folder)
-        ) {
-
-            fs.mkdirSync(
-                folder,
-                { recursive: true }
-            );
+        if (!fs.existsSync(folder)) {
+            fs.mkdirSync(folder,{ recursive: true });
         }
 
-        const fileName =
-            download.suggestedFilename();
+        const fileName = download.suggestedFilename();
 
-        const filePath =
-            path.join(
-                folder,
-                fileName
-            );
+        const filePath = path.join(folder,fileName);
             
-        await download.saveAs(
-            filePath
-        );
+        await download.saveAs(filePath);
 
         return filePath;
     }
 
-    static fileExists(
-        filePath: string
-    ): boolean {
+    static fileExists(filePath: string): boolean {
 
-        return fs.existsSync(
-            filePath
-        );
+        return fs.existsSync(filePath);
     }
 
-    static deleteFile(
-        filePath: string
-    ): void {
+    static deleteFile(filePath: string): void {
 
-        if (
-            fs.existsSync(
-                filePath
-            )
-        ) {
-
-            fs.unlinkSync(
-                filePath
-            );
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
         }
     }
 }

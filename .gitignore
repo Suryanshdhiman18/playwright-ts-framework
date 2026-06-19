@@ -6,3 +6,9 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+reports/screenshots/
+downloads/
+reports/videos/
+reports/traces/
+.env
+.env.*

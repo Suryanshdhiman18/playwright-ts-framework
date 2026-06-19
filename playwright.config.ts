@@ -1,5 +1,20 @@
 import { defineConfig, devices } from '@playwright/test';
 
+import dotenv from 'dotenv';
+import path from 'path';
+
+dotenv.config({
+  path: path.resolve(__dirname, '.env')
+});
+
+const envResult = dotenv.config({
+  path: path.resolve(__dirname, '.env')
+});
+
+console.log('ENV RESULT:', envResult);
+console.log('USERNAME:', process.env.APP_USERNAME);
+console.log('PASSWORD:', process.env.APP_PASSWORD);
+
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -35,7 +50,9 @@ export default defineConfig({
 
   use: {
 
-    baseURL: 'https://rdcas-syn-hom-app-1-dev.azurewebsites.net/',
+    // baseURL: 'https://rdcas-syn-hom-app-1-dev.azurewebsites.net/',
+
+    baseURL: 'https://rdcas-syn-hom-app-1-uat.azurewebsites.net/',
 
     headless: false,
 
