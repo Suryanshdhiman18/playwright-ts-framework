@@ -1,8 +1,4 @@
-import {
-    Page,
-    Locator,
-    expect
-} from '@playwright/test';
+import {Page,Locator, expect} from '@playwright/test';
 
 export class LoginPage {
 
@@ -50,48 +46,31 @@ export class LoginPage {
 
         // Microsoft Email Field
 
-        this.emailField =
-            page.locator('#i0116');
+        this.emailField = page.locator('#i0116');
 
         // Next / Sign In Button
 
-        this.nextButton =
-            page.locator('#idSIButton9');
+        this.nextButton = page.locator('#idSIButton9');
 
         // Password Field
 
-        this.passwordField =
-            page.locator('#i0118');
+        this.passwordField = page.locator('#i0118');
 
         // Stay Signed In Popup
 
-        this.staySignedInTitle =
-            page.locator(
-                'text=Stay signed in'
-            );
+        this.staySignedInTitle = page.locator('text=Stay signed in');
 
         // Yes Button
 
-        this.yesButton =
-            page.getByRole(
-                'button',
-                { name: 'Yes' }
-            );
+        this.yesButton = page.getByRole( 'button', { name: 'Yes' } );
 
         // Release Popup Close Button
 
-        this.releasePopupCloseButton =
-            page.getByRole(
-                'button',
-                { name: 'Close' }
-            );
+        this.releasePopupCloseButton = page.getByRole( 'button', { name: 'Close' } );
 
         // Dashboard Header
 
-        this.dashboardHeader =
-            page.getByText(
-                'Hello, Welcome Back'
-            );
+        this.dashboardHeader = page.getByText('Hello, Welcome Back');
     }
 
     // =====================================================
@@ -100,57 +79,47 @@ export class LoginPage {
 
     async login(username: string, password: string) {
 
-        console.log(
-            'Starting login process'
-        );
+        console.log('Starting login process');
+
+        // console.log(
+        //     'Username received:',
+        //     username
+        // );
+    
+        // console.log(
+        //     'Password received:',
+        //     password ? 'Present' : 'Missing'
+        // );
 
         // -------------------------------------------------
         // OPEN APPLICATION
         // -------------------------------------------------
 
-        await this.page.goto(
-            'https://rdcas-syn-hom-app-1-dev.azurewebsites.net/'
-        );
+         await this.page.goto( 'https://rdcas-syn-hom-app-1-uat.azurewebsites.net/' );
 
         // -------------------------------------------------
         // ENTER USERNAME
         // -------------------------------------------------
 
-        console.log(
-            'Current URL:',
-            this.page.url()
-        );
+        console.log('Current URL:',this.page.url());
 
-        await this.page.waitForLoadState(
-            'domcontentloaded'
-        );
+        await this.page.waitForLoadState('domcontentloaded');
 
-        console.log(
-            'Waiting for Microsoft login page...'
-        );
+        console.log('Waiting for Microsoft login page...');
 
-        await expect(
-            this.page
-        ).toHaveURL(
-            /login\.microsoftonline\.com/,
-            {
-                timeout: 180000
-            }
-        );
+        await expect(this.page).toHaveURL(/login\.microsoftonline\.com/, {timeout: 180000});
 
-        await expect(
-            this.emailField
-        ).toBeVisible({
-            timeout: 180000
-        });
+        await expect( this.emailField ).toBeVisible({ timeout: 180000 });
 
         await this.emailField.click();
 
+        console.log('About to fill email field with:',username);
+        
         await this.emailField.fill(username);
 
-        console.log(
-            'Username entered'
-        );
+        await this.emailField.fill(username);
+
+        console.log('Username entered');
 
         // -------------------------------------------------
         // CLICK NEXT
@@ -162,18 +131,13 @@ export class LoginPage {
         // ENTER PASSWORD
         // -------------------------------------------------
 
-        await this.passwordField.waitFor({
-            state: 'visible',
-            timeout: 60000
-        });
+        await this.passwordField.waitFor({state: 'visible',timeout: 60000});
 
         await this.passwordField.click();
 
         await this.passwordField.fill(password);
 
-        console.log(
-            'Password entered'
-        );
+        console.log('Password entered');
 
         // -------------------------------------------------
         // CLICK SIGN IN
@@ -185,9 +149,7 @@ export class LoginPage {
         //     'networkidle'
         // );
 
-        console.log(
-            'Waiting for MFA approval...'
-        );
+        console.log('Waiting for MFA approval...');
 
         // -------------------------------------------------
         // MFA HANDLING
@@ -213,9 +175,7 @@ export class LoginPage {
 
         await this.verifyDashboardLoaded();
 
-        console.log(
-            'Login completed successfully'
-        );
+        console.log('Login completed successfully');
     }
 
     // =====================================================
@@ -224,17 +184,13 @@ export class LoginPage {
 
     async waitForMFACompletion() {
 
-        console.log(
-            'Complete MFA manually and click Resume in Playwright Inspector'
-        );
+        console.log('Complete MFA manually and click Resume in Playwright Inspector');
 
         // Pause execution for manual MFA
 
         await this.page.pause();
 
-        console.log(
-            'MFA completed successfully'
-        );
+        console.log('MFA completed successfully');
     }
 
     // async waitForMFACompletion() {
@@ -267,27 +223,19 @@ export class LoginPage {
         try {
 
             if (
-                await this.staySignedInTitle.isVisible({
-                    timeout: 5000
-                })
+                await this.staySignedInTitle.isVisible({timeout: 5000})
             ) {
 
-                console.log(
-                    'Stay signed in popup detected'
-                );
+                console.log('Stay signed in popup detected');
 
                 await this.yesButton.click();
 
-                console.log(
-                    'Clicked Yes on Stay signed in'
-                );
+                console.log('Clicked Yes on Stay signed in');
             }
 
         } catch {
 
-            console.log(
-                'Stay signed in popup not displayed'
-            );
+            console.log('Stay signed in popup not displayed');
         }
     }
 
@@ -299,37 +247,23 @@ export class LoginPage {
 
         try {
 
-            const releaseNotesPopup =
-                this.page.getByText(
-                    'Intrics Release Notes'
-                );
+            const releaseNotesPopup = this.page.getByText('Intrics Release Notes');
 
             // Wait for popup
 
-            await releaseNotesPopup.waitFor({
-                timeout: 15000
-            });
+            await releaseNotesPopup.waitFor({timeout: 15000});
 
-            console.log(
-                'Release popup detected'
-            );
+            console.log('Release popup detected');
 
             // Close popup
 
-            await this.page.getByRole(
-                'button',
-                { name: 'Close' }
-            ).click();
+            await this.page.getByRole('button',{ name: 'Close' }).click();
 
-            console.log(
-                'Release popup closed'
-            );
+            console.log('Release popup closed');
 
         } catch {
 
-            console.log(
-                'Release popup not displayed'
-            );
+            console.log('Release popup not displayed');
         }
     }
 
@@ -339,14 +273,8 @@ export class LoginPage {
 
     async verifyDashboardLoaded() {
 
-        await expect(
-            this.dashboardHeader
-        ).toBeVisible({
-            timeout: 90000
-        });
+        await expect(this.dashboardHeader).toBeVisible({timeout: 90000});
 
-        console.log(
-            'Dashboard loaded successfully'
-        );
+        console.log('Dashboard loaded successfully');
     }
 }

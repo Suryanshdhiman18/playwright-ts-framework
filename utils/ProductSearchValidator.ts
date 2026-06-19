@@ -1,9 +1,6 @@
 export class ProductSearchValidator {
 
-    static validateProducts(
-        products: any[],
-        expectedKeywords: string
-    ) {
+    static validateProducts(products: any[], expectedKeywords: string) {
 
         const keywords =
             expectedKeywords
@@ -25,7 +22,7 @@ export class ProductSearchValidator {
                         ${product.Manufacturer}
                         ${product.Category}
                     `
-                    .toLowerCase();
+                        .toLowerCase();
 
                     return keywords.some(
                         keyword =>
