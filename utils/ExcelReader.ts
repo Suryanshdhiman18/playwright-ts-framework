@@ -2,7 +2,7 @@ import * as XLSX from 'xlsx';
 
 export class ExcelReader {
 
-    static readExcel(filePath: string,sheetName: string) {
+    static readTestData(filePath: string,sheetName: string) {
 
         const workbook = XLSX.readFile(filePath);
 

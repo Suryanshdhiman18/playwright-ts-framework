@@ -30,7 +30,7 @@ const filePath = 'test-data/P360_TestCases.xlsx';
 
 const sheetName = 'Sheet1';
 
-const testData = ExcelReader.readExcel(filePath, sheetName);
+const testData = ExcelReader.readTestData(filePath, sheetName);
 
 test.setTimeout(15 * 60 * 1000);
 
