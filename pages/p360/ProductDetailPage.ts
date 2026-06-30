@@ -49,9 +49,9 @@ export class ProductDetailPage {
             'Waiting for Product Detail page...'
         );
 
-        await this.page.waitForLoadState(
-            'networkidle'
-        );
+        // await this.page.waitForLoadState(
+        //     'networkidle'
+        // );
 
         await this.productDescription
             .first()

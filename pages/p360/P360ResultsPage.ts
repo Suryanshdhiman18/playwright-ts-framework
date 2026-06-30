@@ -117,16 +117,16 @@ export class P360ResultsPage {
             .first()
             .click();
 
-        await this.page.waitForLoadState(
-            'networkidle'
-        );
+        // await this.page.waitForLoadState(
+        //     'networkidle'
+        // );
 
-        await this.page.waitForTimeout(
-            3000
-        );
+        // await this.page.waitForTimeout(
+        //     3000
+        // );
 
-        console.log(
-            'After Open Product'
-        );
+        // console.log(
+        //     'After Open Product'
+        // );
     }
 }

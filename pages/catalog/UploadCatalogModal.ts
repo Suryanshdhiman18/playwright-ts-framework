@@ -77,9 +77,7 @@ export class UploadCatalogModal {
 
     async uploadFile(filePath: string) {
 
-        await this.fileInput.setInputFiles(
-            filePath
-        );
+        await this.fileInput.setInputFiles(filePath);
     }
 
     async clickUpload() {
@@ -89,52 +87,33 @@ export class UploadCatalogModal {
 
     async waitForValidationSuccess() {
 
-        await expect(
-            this.validationMessage
-        ).toBeVisible({
-            timeout: 120000
-        });
+        await expect(this.validationMessage).toBeVisible({timeout: 120000});
     }
 
     async waitForPartialValidation() {
 
-        await expect(
-            this.downloadErrorButton
-        ).toBeVisible({
-            timeout: 120000
-        });
+        await expect(this.downloadErrorButton).toBeVisible({timeout: 120000});
 
-        await expect(
-            this.uploadValidRecordsButton
-        ).toBeVisible({
-            timeout: 120000
-        });
+        await expect(this.uploadValidRecordsButton).toBeVisible({timeout: 120000});
     }
 
     async waitForUploadFailure() {
 
-        await expect(
-            this.errorBanner
-        ).toBeVisible({
-            timeout: 120000
-        });
+        await expect(this.errorBanner).toBeVisible({timeout: 120000});
     }
 
     async clickUploadValidRecords() {
 
-        await this.uploadValidRecordsButton
-            .click();
+        await this.uploadValidRecordsButton.click();
     }
 
     async downloadErrorRecords() {
 
-        await this.downloadErrorButton
-            .click();
+        await this.downloadErrorButton.click();
     }
 
     async cancelUpload() {
 
-        await this.cancelUploadButton
-            .click();
+        await this.cancelUploadButton.click();
     }
 }

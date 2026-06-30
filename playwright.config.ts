@@ -54,6 +54,8 @@ export default defineConfig({
 
     baseURL: 'https://rdcas-syn-hom-app-1-uat.azurewebsites.net/',
 
+    // baseURL: "https://myintrics.io/",
+
     headless: false,
 
     // storageState:

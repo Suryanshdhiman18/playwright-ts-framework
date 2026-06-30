@@ -2,7 +2,23 @@
   "name": "playwright-ts-framework",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {},
+"scripts": {
+    "test": "playwright test",
+
+    "auth": "playwright test tests/setup/auth.setup.ts",
+
+    "p360": "playwright test tests/p360 --project=chromium",
+
+    "catalog": "playwright test tests/catalog --project=chromium",
+
+    "smoke": "playwright test tests/p360 tests/catalog --project=chromium",
+
+    "regression": "playwright test --project=chromium",
+
+    "report": "playwright show-report",
+
+    "report:port": "playwright show-report --port=9324"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
