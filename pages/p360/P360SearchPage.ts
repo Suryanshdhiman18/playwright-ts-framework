@@ -115,8 +115,8 @@ export class P360SearchPage {
 
         await this.searchButton.click();
 
-        await this.page.waitForLoadState(
-            'networkidle'
-        );
+        // await this.page.waitForLoadState(
+        //     'networkidle'
+        // );
     }
 }

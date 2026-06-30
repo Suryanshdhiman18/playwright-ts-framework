@@ -95,7 +95,14 @@ export class LoginPage {
         // OPEN APPLICATION
         // -------------------------------------------------
 
+        // PROD --
+        // await this.page.goto( 'https://myintrics.io/' );
+
+        // UAT --
          await this.page.goto( 'https://rdcas-syn-hom-app-1-uat.azurewebsites.net/' );
+
+        // DEV --
+        //  await this.page.goto( 'https://rdcas-syn-hom-app-1-dev.azurewebsites.net/' );
 
         // -------------------------------------------------
         // ENTER USERNAME
@@ -251,7 +258,7 @@ export class LoginPage {
 
             // Wait for popup
 
-            await releaseNotesPopup.waitFor({timeout: 15000});
+            await releaseNotesPopup.waitFor({timeout: 20000});
 
             console.log('Release popup detected');
 

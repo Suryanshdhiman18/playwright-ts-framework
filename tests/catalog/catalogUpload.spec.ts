@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-import { LoginPage } from '../../pages/LoginPage';
+import { LoginPage } from '../../pages/common/LoginPage';
 import { SidebarComponent } from '../../pages/common/SidebarComponent';
 import { CatalogPage } from '../../pages/catalog/CatalogPage';
 import { UploadCatalogModal } from '../../pages/catalog/UploadCatalogModal';
@@ -12,9 +12,7 @@ import { ScreenshotUtil } from '../../utils/ScreenshotUtil';
 import { DownloadUtil } from '../../utils/DownloadUtil';
 import { CatalogUploadData } from '../../models/CatalogUploadData';
 
-test(
-    'Catalog Upload Flow',
-    async ({ page }) => {
+test('Catalog Upload Flow',async ({ page }) => {
 
         const loginPage = new LoginPage(page);
 
@@ -41,10 +39,7 @@ test(
             );
         }
 
-        await loginPage.login(
-            process.env.APP_USERNAME,
-            process.env.APP_PASSWORD
-        );
+        await loginPage.login(process.env.APP_USERNAME,process.env.APP_PASSWORD);
 
         Logger.info('Login completed successfully');
 
@@ -56,7 +51,7 @@ test(
 
             try {
 
-                Logger.info(`Executing Test Case: ${data.TC_ID}`);
+                Logger.step(`Executing Test Case: ${data.TC_ID}`);
 
                 const catalogFilePath = `test-data/catalog-files/${data.FileName}`;
 
@@ -64,8 +59,7 @@ test(
 
                 await catalogPage.openUploadCatalogModal();
 
-                await uploadModal.uploadFile(catalogFilePath
-                );
+                await uploadModal.uploadFile(catalogFilePath);
 
                 Logger.info(`Uploaded file: ${data.FileName}`);
 
@@ -93,64 +87,42 @@ test(
 
                         const downloadPromise = page.waitForEvent('download');
 
-                        await uploadModal
-                            .downloadErrorRecords();
+                        await uploadModal.downloadErrorRecords();
 
-                        const download =
-                            await downloadPromise;
+                        const download = await downloadPromise;
 
-                        const downloadedFile =
-                            await DownloadUtil
-                                .saveDownload(
-                                    download
-                                );
+                        const downloadedFile = await DownloadUtil.saveDownload(download);
 
-                        expect(
-                            DownloadUtil.fileExists(
-                                downloadedFile
-                            )
-                        ).toBeTruthy();
+                        expect(DownloadUtil.fileExists(downloadedFile)).toBeTruthy();
 
-                        Logger.info(
-                            `Downloaded Error File: ${downloadedFile}`
-                        );
+                        Logger.info(`Downloaded Error File: ${downloadedFile}`);
 
-                        await uploadModal
-                            .clickUploadValidRecords();
+                        await uploadModal.clickUploadValidRecords();
 
-                        actualResult =
-                            'Partial upload successful';
+                        actualResult = 'Partial upload successful';
 
-                        Logger.info(
-                            'Valid records uploaded from partial file'
-                        );
+                        Logger.info('Valid records uploaded from partial file');
 
                         break;
 
                     case 'INVALID':
 
-                        await uploadModal
-                            .waitForUploadFailure();
+                        await uploadModal.waitForUploadFailure();
 
-                        actualResult =
-                            'Upload validation failed as expected';
+                        actualResult = 'Upload validation failed as expected';
 
-                        Logger.info(
-                            'Invalid file validation failed as expected'
-                        );
+                        Logger.info('Invalid file validation failed as expected');
 
                         break;
 
                     default:
 
-                        throw new Error(
-                            `Unknown Scenario: ${data.Scenario}`
-                        );
+                        throw new Error(`Unknown Scenario: ${data.Scenario}`);
                 }
 
                 ExcelWriter.updateResult(filePath, sheetName, data.TC_ID, actualResult, 'PASS');
 
-                Logger.info(`Test Passed: ${data.TC_ID}`);
+                Logger.success(`Test Passed: ${data.TC_ID}`);
             }
             catch (error: any) {
 

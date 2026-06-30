@@ -4,7 +4,7 @@ import path from 'path';
 
 import fs from 'fs';
 
-import { LoginPage } from '../../pages/LoginPage';
+import { LoginPage } from '../../pages/common/LoginPage';
 
 const authFile = path.join(
     __dirname,

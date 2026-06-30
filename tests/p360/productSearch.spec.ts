@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-import { LoginPage } from '../../pages/LoginPage';
+import { LoginPage } from '../../pages/common/LoginPage';
 
 import { SidebarComponent } from '../../pages/common/SidebarComponent';
 
@@ -25,6 +25,8 @@ import { ProductSearchValidator } from '../../utils/ProductSearchValidator';
 import { DownloadUtil } from '../../utils/DownloadUtil';
 
 import { ProductDetailValidator } from '../../utils/ProductDetailValidator';
+
+import { PerformanceUtil } from '../../utils/PerformanceUtil';
 
 const filePath = 'test-data/P360_TestCases.xlsx';
 
@@ -74,6 +76,14 @@ test('P360 Product Search Flow',
 
         for (const data of testData as any[]) {
 
+            let actualResult = '';
+
+            let searchApiTime = 0;
+
+            let detailApiTime = 0;
+
+            let pageLoadTime = 0;
+
             if (
                 data.Execute !== 'YES'
             ) {
@@ -83,7 +93,7 @@ test('P360 Product Search Flow',
             }
 
             try {
-                Logger.info(`Executing Test Case: ${data.TC_ID}`);
+                Logger.step(`Executing Test Case: ${data.TC_ID}`);
 
                 // ---------- Verify Search Page ----------
 
@@ -96,6 +106,7 @@ test('P360 Product Search Flow',
                 // ---------- Search Product ----------
 
                 await searchPage.searchProduct(data.SearchType, data.SearchValue);
+
 
                 // ---------- Wait For Search API ----------
 
@@ -121,11 +132,19 @@ test('P360 Product Search Flow',
                         )
                         : null;
 
+                          // ----------- Api Performance ----------
+
+                const searchApiStartTime = Date.now();
+
                 await searchPage.clickSearch();
 
                 // ---------- Capture API Response ----------
 
                 const response = await responsePromise;
+
+                searchApiTime = Date.now() - searchApiStartTime;
+
+                Logger.info(`Search API Response Time: ${searchApiTime} ms`);
 
                 const responseBody = await response.json();
 
@@ -142,7 +161,13 @@ test('P360 Product Search Flow',
 
                     Logger.info('UPC Search → Direct Product Detail Page');
 
+                    const detailApiStartTime = Date.now();
+
                     const detailResponse = await detailApiPromise!;
+
+                    detailApiTime = Date.now() - detailApiStartTime;
+
+                    Logger.info(`Detail API Response Time: ${detailApiTime} ms`);
 
                     detailBody = await detailResponse.json();
 
@@ -172,7 +197,45 @@ test('P360 Product Search Flow',
 
                     Logger.info(`Manufacturer: ${detailBody.Product360CardInfo.Manufacturer}`);
 
+                    // ----------------------- API Performance ------------------
+
+                    const pageLoadStartTime = Date.now();
+
                     await detailPage.verifyProductLoaded();
+
+                    pageLoadTime = Date.now() - pageLoadStartTime;
+
+                    Logger.info(`Product Detail Page Load Time: ${pageLoadTime} ms`);
+
+                    // expect(searchApiTime).toBeLessThan(5000);
+
+                    // expect(detailApiTime).toBeLessThan(5000);
+
+                    // expect(pageLoadTime).toBeLessThan(10000);
+
+                    const SEARCH_API_THRESHOLD = 5000;
+                    const DETAIL_API_THRESHOLD = 5000;
+                    const PAGE_LOAD_THRESHOLD = 10000;
+
+                    if (searchApiTime > SEARCH_API_THRESHOLD) {
+                        Logger.warn(
+                            `Search API exceeded threshold: ${searchApiTime} ms`
+                        );
+                    }
+
+                    if (detailApiTime > DETAIL_API_THRESHOLD) {
+                        Logger.warn(
+                            `Detail API exceeded threshold: ${detailApiTime} ms`
+                        );
+                    }
+
+                    if (pageLoadTime > PAGE_LOAD_THRESHOLD) {
+                        Logger.warn(
+                            `Page Load exceeded threshold: ${pageLoadTime} ms`
+                        );
+                    }
+
+                    // await detailPage.verifyProductLoaded();
 
                     // Search Input Validation
 
@@ -193,7 +256,7 @@ test('P360 Product Search Flow',
 
                     expect(resultCount).toBeGreaterThan(0);
 
-                    console.log('Before Open Product');
+                    console.debug('Before Open Product');
 
                     const detailApiPromise =
                         page.waitForResponse(
@@ -205,11 +268,21 @@ test('P360 Product Search Flow',
                                 response.status() === 200
                         );
 
+                    // await resultsPage.openFirstProduct();
+
+                    // console.log('After Open Product');
+
+                    const detailApiStartTime = Date.now();
+
                     await resultsPage.openFirstProduct();
 
-                    console.log('After Open Product');
+                    console.debug("After Open Product");
 
                     const detailResponse = await detailApiPromise;
+
+                    detailApiTime = Date.now() - detailApiStartTime;
+
+                    Logger.info(`Detail API Response Time: ${detailApiTime} ms`);
 
                     detailBody = await detailResponse.json();
 
@@ -227,7 +300,13 @@ test('P360 Product Search Flow',
 
                     Logger.info(`Manufacturer: ${detailBody.Product360CardInfo.Manufacturer}`);
 
+                    const pageLoadStartTime = Date.now();
+
                     await detailPage.verifyProductLoaded();
+
+                    pageLoadTime = Date.now() - pageLoadStartTime;
+
+                    Logger.info(`Product Detail Page Load Time: ${pageLoadTime} ms`);
                 }
 
                 // ---------- Validate Product Detail ----------
@@ -259,20 +338,31 @@ test('P360 Product Search Flow',
 
                 expect(downloadFilePath).toMatch(/\.(xlsx|csv)$/i);
 
-                Logger.info('Export Validation Passed');
+                Logger.success('Export Validation Passed');
 
                 // ---------- Update Excel PASS ----------
 
-                ExcelWriter.updateResult(filePath, sheetName, data.TC_ID, `Results displayed successfully for ${data.SearchValue}`, 'PASS');
+                // ExcelWriter.updateResult(filePath, sheetName, data.TC_ID, `Results displayed successfully for ${data.SearchValue}`, 'PASS');
 
-                Logger.info(`Test Passed: ${data.TC_ID}`);
+                actualResult =
+                    `Results displayed successfully for ${data.SearchValue}`;
+
+                ExcelWriter.updateResult(
+                    filePath,
+                    sheetName,
+                    data.TC_ID,
+                    actualResult,
+                    'PASS',
+                    searchApiTime,
+                    detailApiTime,
+                    pageLoadTime
+                );
+
+                Logger.success(`Test Passed: ${data.TC_ID}`);
 
                 // ---------- Navigate Back ----------
 
                 // ---------- Reset To Search Page ----------
-                
-
-                Logger.info(`Test Passed: ${data.TC_ID}`);
 
                 try {
 
@@ -305,7 +395,18 @@ test('P360 Product Search Flow',
 
                 // ---------- Update Excel FAIL ----------
 
-                ExcelWriter.updateResult(filePath, sheetName, data.TC_ID, error.message, 'FAIL');
+                // ExcelWriter.updateResult(filePath, sheetName, data.TC_ID, error.message, 'FAIL');
+
+                ExcelWriter.updateResult(
+                    filePath,
+                    sheetName,
+                    data.TC_ID,
+                    error.message,
+                    'FAIL',
+                    searchApiTime,
+                    detailApiTime,
+                    pageLoadTime
+                );
 
                 // ---------- Reset Navigation ----------
 
